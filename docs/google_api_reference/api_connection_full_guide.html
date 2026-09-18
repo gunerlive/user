@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>คู่มือเชื่อม API กลาง RPK24</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial,'Sarabun',sans-serif;line-height:1.8;margin:30px;background:#f8fbff;color:#0f172a}
+.card{background:white;border:1px solid #dbeafe;border-radius:20px;padding:22px;margin:16px 0;box-shadow:0 10px 25px #0001}
+code,pre{background:#0f172a;color:#e2e8f0;border-radius:14px;padding:14px;display:block;overflow:auto}
+h1,h2{color:#1e3a8a}
+</style>
+</head>
+<body>
+<h1>คู่มือเชื่อมต่อ Google_API Center กลางของโรงเรียน</h1>
+<div class="card">
+<h2>URL สำคัญ</h2>
+<p><b>Callback กลาง:</b> https://rpk24.ac.th/Google_API/oauth_callback.php</p>
+<p><b>Upload Endpoint:</b> https://rpk24.ac.th/Google_API/api_upload.php</p>
+<p><b>Base URL:</b> https://rpk24.ac.th/Google_API</p>
+</div>
+<div class="card">
+<h2>หลักการ</h2>
+<p>ระบบย่อยไม่ต้องสร้าง OAuth เอง ไม่ต้องสร้าง OAuth Client ID ใหม่ ให้ส่งไฟล์ไปยัง API กลางด้วย system_key และ api_secret</p>
+</div>
+<div class="card">
+<h2>ฟิลด์ที่ต้องส่ง</h2>
+<ul>
+<li>system_key</li>
+<li>api_secret</li>
+<li>uploader_name</li>
+<li>description</li>
+<li>file</li>
+</ul>
+</div>
+<div class="card">
+<h2>ตัวอย่าง Prompt ให้ AI</h2>
+<pre># PROMPT สำหรับให้ AI สร้างระบบเชื่อม Google_API กลางของโรงเรียน
+
+ให้คัดลอกข้อความนี้ไปวางใน AI แล้วแก้ไขข้อมูลในวงเล็บให้ตรงกับระบบของครู
+
+---
+
+ช่วยสร้างระบบเว็บ PHP ชื่อ “[ใส่ชื่อระบบ]” ให้เชื่อมต่อกับ Google_API Center กลางของโรงเรียน
+
+## ข้อมูล API กลางของโรงเรียน
+
+- Base URL: https://rpk24.ac.th/Google_API
+- OAuth Callback กลาง: https://rpk24.ac.th/Google_API/oauth_callback.php
+- Upload Endpoint: https://rpk24.ac.th/Google_API/api_upload.php
+
+## ข้อกำหนดสำคัญ
+
+1. ระบบใหม่ห้ามสร้าง OAuth Client ID ใหม่
+2. ระบบใหม่ห้ามทำ OAuth เอง
+3. ให้ส่งไฟล์ไปที่ API กลางของโรงเรียนเท่านั้น
+4. ให้ใช้ endpoint นี้สำหรับอัปโหลดไฟล์:
+   https://rpk24.ac.th/Google_API/api_upload.php
+
+## ข้อมูลระบบย่อย
+
+- system_key: [ใส่ system_key ที่ได้จากผู้ดูแล]
+- api_secret: [ใส่ api_secret ที่ได้จากผู้ดูแล]
+- allowed_extensions: jpg,png,pdf,doc,docx,xls,xlsx
+- max_file_size_mb: 20
+
+## วิธีส่งไฟล์
+
+ให้ส่งข้อมูลแบบ POST multipart/form-data ประกอบด้วย:
+
+- system_key
+- api_secret
+- uploader_name
+- description
+- file
+
+## ผลลัพธ์ที่ต้องบันทึก
+
+เมื่อ API ส่ง JSON กลับมา ให้บันทึกค่าต่อไปนี้ลงฐานข้อมูลของระบบใหม่:
+
+- file_id
+- webViewLink
+- name
+- mimeType
+- size
+- created_at
+
+## UI และการใช้งาน
+
+1. หน้าเว็บต้องรองรับมือถือ
+2. มี Drag &amp; Drop Upload
+3. ตรวจสอบชนิดไฟล์และขนาดไฟล์ก่อนอัปโหลด
+4. แสดงลิงก์เปิดไฟล์ Google Drive จาก webViewLink
+5. ถ้าอัปโหลดไม่สำเร็จ ให้แสดงข้อความ error แบบเข้าใจง่าย
+6. ขอไฟล์ระบบฉบับสมบูรณ์ พร้อมใช้งานบนโฮสต์ PHP
+
+## ตัวอย่าง PHP cURL
+
+```php
+$apiUrl = 'https://rpk24.ac.th/Google_API/api_upload.php';
+
+$postData = [
+    'system_key'    =&gt; 'your_system_key',
+    'api_secret'    =&gt; 'your_api_secret',
+    'uploader_name' =&gt; 'ชื่อผู้ส่งไฟล์',
+    'description'   =&gt; 'คำอธิบายไฟล์',
+    'file'          =&gt; new CURLFile(
+        $_FILES['file']['tmp_name'],
+        $_FILES['file']['type'],
+        $_FILES['file']['name']
+    )
+];
+
+$ch = curl_init($apiUrl);
+curl_setopt_array($ch, [
+    CURLOPT_POST           =&gt; true,
+    CURLOPT_POSTFIELDS     =&gt; $postData,
+    CURLOPT_RETURNTRANSFER =&gt; true,
+    CURLOPT_TIMEOUT        =&gt; 120
+]);
+
+$response = curl_exec($ch);
+$error = curl_error($ch);
+curl_close($ch);
+
+if ($error) {
+    die('เชื่อมต่อ API ไม่สำเร็จ: ' . $error);
+}
+
+$data = json_decode($response, true);
+
+if (!empty($data['success'])) {
+    echo 'อัปโหลดสำเร็จ: ' . $data['webViewLink'];
+} else {
+    echo 'อัปโหลดไม่สำเร็จ: ' . ($data['message'] ?? $response);
+}
+```
+</pre>
+</div>
+</body>
+</html>

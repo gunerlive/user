@@ -1,0 +1,20 @@
+{
+    "name": "school/e-sign-document",
+    "description": "ระบบเซ็นเอกสารออนไลน์สำหรับหนังสือราชการ พร้อมบันทึกไฟล์ขึ้น Google Drive ผ่าน Google_API กลางของโรงเรียน",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*",
+        "ext-gd": "*",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "setasign/fpdi": "^2.6",
+        "setasign/fpdf": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "ESign\\": "src/"
+        }
+    }
+}

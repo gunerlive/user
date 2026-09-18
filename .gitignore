@@ -1,0 +1,8 @@
+/vendor/
+/config/config.php
+/storage/working/*
+!/storage/working/.gitkeep
+/storage/tmp/*
+!/storage/tmp/.gitkeep
+*.log
+.DS_Store
