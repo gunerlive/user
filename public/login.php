@@ -40,7 +40,7 @@ $pageTitle = 'เข้าสู่ระบบ';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>เข้าสู่ระบบ - ระบบเซ็นเอกสารออนไลน์</title>
+<title>เข้าสู่ระบบ - <?= Helpers::e($config['system_name'] ?? 'ระบบเซ็นเอกสารออนไลน์') ?></title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="assets/css/app.css">
 </head>
@@ -51,7 +51,7 @@ $pageTitle = 'เข้าสู่ระบบ';
       <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
       </div>
-      <div style="font-size: 24px; font-weight: 800;">ระบบเซ็นเอกสารออนไลน์</div>
+      <div style="font-size: 24px; font-weight: 800;"><?= Helpers::e($config['system_name'] ?? 'ระบบเซ็นเอกสารออนไลน์') ?></div>
       <div style="font-size: 14px; opacity: 0.85; margin-top: 8px;">สำหรับหนังสือราชการที่ต้องผ่านการลงนามหลายท่านตามลำดับ</div>
     </div>
     <div style="font-size: 12px; opacity: 0.6;">ใช้งานผ่านเว็บเบราว์เซอร์ ไม่ต้องติดตั้งโปรแกรมเพิ่มเติม</div>

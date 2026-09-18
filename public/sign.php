@@ -32,7 +32,7 @@ $pageTitle = 'หน้าลงนามเอกสาร';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>หน้าลงนามเอกสาร - ระบบเซ็นเอกสารออนไลน์</title>
+<title>หน้าลงนามเอกสาร - <?= Helpers::e($config['system_name'] ?? 'ระบบเซ็นเอกสารออนไลน์') ?></title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="assets/css/app.css">
 </head>

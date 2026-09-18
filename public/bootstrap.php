@@ -31,9 +31,12 @@ $config = require $configPath;
 use ESign\Auth;
 use ESign\Database;
 use ESign\DocumentService;
+use ESign\SettingsService;
 use ESign\SignerService;
 
 $db = Database::connection($config['db']);
+$settingsService = new SettingsService($db);
+$config = $settingsService->applyTo($config);
 $auth = new Auth($db);
 $documentService = new DocumentService($db);
 $signerService = new SignerService($db);

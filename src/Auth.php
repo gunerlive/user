@@ -63,4 +63,48 @@ class Auth
     {
         return (int) $db->query('SELECT COUNT(*) FROM users')->fetchColumn() > 0;
     }
+
+    public function listUsers(): array
+    {
+        return $this->db->query('SELECT id, full_name, email, is_active, created_at FROM users ORDER BY created_at ASC')->fetchAll();
+    }
+
+    public function emailExists(string $email): bool
+    {
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
+        $stmt->execute(['email' => $email]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    public function createUser(string $fullName, string $email, string $password): int
+    {
+        $stmt = $this->db->prepare('INSERT INTO users (full_name, email, password_hash) VALUES (:full_name, :email, :password_hash)');
+        $stmt->execute([
+            'full_name'     => $fullName,
+            'email'         => $email,
+            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+        ]);
+        return (int) $this->db->lastInsertId();
+    }
+
+    public function setUserActive(int $userId, bool $active): void
+    {
+        $stmt = $this->db->prepare('UPDATE users SET is_active = :active WHERE id = :id');
+        $stmt->execute(['active' => $active ? 1 : 0, 'id' => $userId]);
+    }
+
+    public function changePassword(int $userId, string $currentPassword, string $newPassword): bool
+    {
+        $stmt = $this->db->prepare('SELECT password_hash FROM users WHERE id = :id');
+        $stmt->execute(['id' => $userId]);
+        $row = $stmt->fetch();
+
+        if (!$row || !password_verify($currentPassword, $row['password_hash'])) {
+            return false;
+        }
+
+        $update = $this->db->prepare('UPDATE users SET password_hash = :hash WHERE id = :id');
+        $update->execute(['hash' => password_hash($newPassword, PASSWORD_DEFAULT), 'id' => $userId]);
+        return true;
+    }
 }
