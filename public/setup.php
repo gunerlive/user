@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $stmt = $db->prepare('INSERT INTO users (full_name, email, password_hash) VALUES (:full_name, :email, :password_hash)');
+        $stmt = $db->prepare('INSERT INTO signflow_users (full_name, email, password_hash) VALUES (:full_name, :email, :password_hash)');
         $stmt->execute([
             'full_name'      => $fullName,
             'email'          => $email,

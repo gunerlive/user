@@ -1,10 +1,11 @@
 -- ระบบเซ็นเอกสารออนไลน์ - โครงสร้างฐานข้อมูล
 -- นำเข้าไฟล์นี้ผ่าน phpMyAdmin หรือคำสั่ง: mysql -u user -p dbname < database/schema.sql
+-- ตารางทั้งหมดขึ้นต้นด้วย signflow_ เพื่อไม่ให้ชนกับตารางของระบบอื่นในฐานข้อมูลเดียวกัน
 
 SET NAMES utf8mb4;
 SET time_zone = '+07:00';
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS signflow_users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
@@ -13,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS documents (
+CREATE TABLE IF NOT EXISTS signflow_documents (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     document_number VARCHAR(100) NOT NULL DEFAULT '',
     title VARCHAR(500) NOT NULL,
@@ -31,10 +32,10 @@ CREATE TABLE IF NOT EXISTS documents (
     saved_at DATETIME NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_documents_created_by FOREIGN KEY (created_by) REFERENCES users(id)
+    CONSTRAINT fk_signflow_documents_created_by FOREIGN KEY (created_by) REFERENCES signflow_users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS signers (
+CREATE TABLE IF NOT EXISTS signflow_signers (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     document_id INT UNSIGNED NOT NULL,
     order_no INT UNSIGNED NOT NULL,
@@ -49,22 +50,22 @@ CREATE TABLE IF NOT EXISTS signers (
     signed_at DATETIME NULL,
     signed_ip VARCHAR(45) NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_signers_document FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
-    INDEX idx_signers_document (document_id, order_no)
+    CONSTRAINT fk_signflow_signers_document FOREIGN KEY (document_id) REFERENCES signflow_documents(id) ON DELETE CASCADE,
+    INDEX idx_signflow_signers_document (document_id, order_no)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS settings (
+CREATE TABLE IF NOT EXISTS signflow_settings (
     setting_key VARCHAR(100) NOT NULL PRIMARY KEY,
     setting_value TEXT NULL,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS activity_log (
+CREATE TABLE IF NOT EXISTS signflow_activity_log (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     document_id INT UNSIGNED NOT NULL,
     message VARCHAR(500) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_activity_document FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+    CONSTRAINT fk_signflow_activity_document FOREIGN KEY (document_id) REFERENCES signflow_documents(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- หมายเหตุ: ยังไม่ต้องสร้างบัญชีผู้ใช้ที่นี่

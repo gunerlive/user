@@ -15,7 +15,7 @@ class SettingsService
     public function __construct(private PDO $db)
     {
         $this->cache = [];
-        foreach ($this->db->query('SELECT setting_key, setting_value FROM settings') as $row) {
+        foreach ($this->db->query('SELECT setting_key, setting_value FROM signflow_settings') as $row) {
             $this->cache[$row['setting_key']] = $row['setting_value'];
         }
     }
@@ -29,7 +29,7 @@ class SettingsService
     public function set(string $key, string $value): void
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO settings (setting_key, setting_value) VALUES (:k, :v)
+            'INSERT INTO signflow_settings (setting_key, setting_value) VALUES (:k, :v)
              ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)'
         );
         $stmt->execute(['k' => $key, 'v' => $value]);

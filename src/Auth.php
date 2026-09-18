@@ -12,7 +12,7 @@ class Auth
 
     public function attempt(string $email, string $password): ?array
     {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE email = :email AND is_active = 1 LIMIT 1');
+        $stmt = $this->db->prepare('SELECT * FROM signflow_users WHERE email = :email AND is_active = 1 LIMIT 1');
         $stmt->execute(['email' => $email]);
         $user = $stmt->fetch();
 
@@ -61,24 +61,24 @@ class Auth
 
     public static function hasAnyUser(PDO $db): bool
     {
-        return (int) $db->query('SELECT COUNT(*) FROM users')->fetchColumn() > 0;
+        return (int) $db->query('SELECT COUNT(*) FROM signflow_users')->fetchColumn() > 0;
     }
 
     public function listUsers(): array
     {
-        return $this->db->query('SELECT id, full_name, email, is_active, created_at FROM users ORDER BY created_at ASC')->fetchAll();
+        return $this->db->query('SELECT id, full_name, email, is_active, created_at FROM signflow_users ORDER BY created_at ASC')->fetchAll();
     }
 
     public function emailExists(string $email): bool
     {
-        $stmt = $this->db->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM signflow_users WHERE email = :email');
         $stmt->execute(['email' => $email]);
         return (int) $stmt->fetchColumn() > 0;
     }
 
     public function createUser(string $fullName, string $email, string $password): int
     {
-        $stmt = $this->db->prepare('INSERT INTO users (full_name, email, password_hash) VALUES (:full_name, :email, :password_hash)');
+        $stmt = $this->db->prepare('INSERT INTO signflow_users (full_name, email, password_hash) VALUES (:full_name, :email, :password_hash)');
         $stmt->execute([
             'full_name'     => $fullName,
             'email'         => $email,
@@ -89,13 +89,13 @@ class Auth
 
     public function setUserActive(int $userId, bool $active): void
     {
-        $stmt = $this->db->prepare('UPDATE users SET is_active = :active WHERE id = :id');
+        $stmt = $this->db->prepare('UPDATE signflow_users SET is_active = :active WHERE id = :id');
         $stmt->execute(['active' => $active ? 1 : 0, 'id' => $userId]);
     }
 
     public function changePassword(int $userId, string $currentPassword, string $newPassword): bool
     {
-        $stmt = $this->db->prepare('SELECT password_hash FROM users WHERE id = :id');
+        $stmt = $this->db->prepare('SELECT password_hash FROM signflow_users WHERE id = :id');
         $stmt->execute(['id' => $userId]);
         $row = $stmt->fetch();
 
@@ -103,7 +103,7 @@ class Auth
             return false;
         }
 
-        $update = $this->db->prepare('UPDATE users SET password_hash = :hash WHERE id = :id');
+        $update = $this->db->prepare('UPDATE signflow_users SET password_hash = :hash WHERE id = :id');
         $update->execute(['hash' => password_hash($newPassword, PASSWORD_DEFAULT), 'id' => $userId]);
         return true;
     }
